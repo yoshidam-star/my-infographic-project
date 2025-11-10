@@ -1,27 +1,23 @@
-<!DOCTYPE html>
-<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>令和7年度 付属図書館 利用状況アンケート インフォグラフィック</title>
-    <!-- 1. Tailwind CSS 本体を読み込みます -->
+    <title>付属図書館 利用状況アンケート インフォグラフィック</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 2. Chart.jsライブラリを読み込みます -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- 3. CSSスタイルを定義します -->
     <style>
+        /* 埋め込み環境向けに高さを少し大きく設定 */
         .chart-container {
             position: relative;
             width: 100%;
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
-            height: 300px;
-            max-height: 400px;
+            height: 350px; /* 300pxから350pxに変更 */
+            max-height: 450px; /* 400pxから450pxに変更 */
         }
         .chart-container.h-lg {
-            height: 400px;
-            max-height: 500px;
+            height: 450px; /* 400pxから450pxに変更 */
+            max-height: 550px; /* 500pxから550pxに変更 */
         }
         .chart-container.h-sm {
             height: 250px;
@@ -29,14 +25,17 @@
         }
         @media (min-width: 768px) {
             .chart-container {
-                height: 350px;
-            }
-            .chart-container.h-lg {
                 height: 400px;
             }
+            .chart-container.h-lg {
+                height: 450px;
+            }
+        }
+        /* Googleサイトの埋め込みで、スクロールバーを非表示にするため */
+        html, body {
+             overflow: hidden; 
         }
     </style>
-    <!-- 4. Tailwindのカスタムカラー設定（tailwind.config）を定義します -->
     <script>
         tailwind.config = {
             theme: {
@@ -54,8 +53,8 @@
         }
     </script>
 </head>
-<body class="bg-lib-light-bg text-lib-text font-sans">
 
+<div class="bg-lib-light-bg text-lib-text font-sans">
     <header class="bg-lib-primary text-white p-6 shadow-md sticky top-0 z-10 pt-12 md:pt-6">
         <h1 class="text-2xl md:text-3xl font-bold text-center">令和7年度 付属図書館 利用状況アンケート</h1>
     </header>
@@ -246,17 +245,15 @@
         令和7年度 付属図書館 利用状況アンケート | このインフォグラフィックはレポートデータを基に生成されました。
     </footer>
 
-    <!-- 
-      【重要】メインのグラフ描画スクリプト（DOMContentLoaded）
-      動作確認済みのダッシュボードと「一字一句同一」のヘルパー関数・オプション定義に差し替えました
-    -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // グラフ描画関数を定義
+        const drawCharts = () => {
             
             // Chart.jsがロードされているか確認 (万が一のため)
             if (typeof Chart === 'undefined') {
                 const containers = document.getElementsByClassName('chart-container');
                 for (let i = 0; i < containers.length; i++) {
+                    // エラーメッセージを表示して、グラフの代わりにテキストを表示
                     containers[i].innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; background-color:#F3F4F6; border-radius:8px;"><p style="color:#DC2626; padding:16px; text-align:center;">グラフの読み込みに失敗しました。<br>インターネット接続を確認し、ページを再読み込みしてください。</p></div>';
                 }
                 return; // 処理を停止
@@ -271,9 +268,6 @@
                 light: '#D8F3FF'
             };
 
-            // --- ここから修正 ---
-            // 動作確認済みのダッシュボードと「一字一句同一」のヘルパー関数・オプション定義を使用します
-
             // ツールチップのコールバック関数
             const multiLineTooltipTitle = (tooltipItems) => {
                 const item = tooltipItems[0];
@@ -282,7 +276,6 @@
                 if (Array.isArray(label)) {
                     return label.join(' ');
                 }
-                // ダッシュボード側の定義（|| '' がない）に合わせます
                 return label;
             };
             
@@ -305,27 +298,23 @@
                 plugins: {
                     ...defaultTooltipOptions.plugins,
                     legend: {
-                        position: 'top', // インフォグラフィックは 'top' に設定
+                        position: 'top', 
                     },
                 },
                 cutout: '60%'
             };
 
-            // バーグラフのデフォルトオプション (ダッシュボードと完全に同一化)
+            // バーグラフのデフォルトオプション
             const defaultBarOptions = (indexAxis = 'x', suggestMax = null) => ({
                 ...defaultTooltipOptions,
                 indexAxis: indexAxis,
                 scales: {
                     [indexAxis === 'x' ? 'y' : 'x']: {
                         beginAtZero: true,
-                        suggestedMax: suggestMax // suggestMax を使用
-                    },
-                    // ダッシュボード側にはこの定義は無いため、削除
-                    // [indexAxis === 'x' ? 'x' : 'y']: {
-                    // }
+                        suggestedMax: suggestMax
+                    }
                 }
             });
-            // --- ここまで修正 ---
 
 
             // --- グラフ 1 ---
@@ -372,7 +361,7 @@
                         }
                     ]
                 },
-                options: defaultBarOptions('x', null) // 修正
+                options: defaultBarOptions('x', null)
             });
 
             // --- グラフ 4 ---
@@ -386,7 +375,7 @@
                         backgroundColor: chartColors.primary
                     }]
                 },
-                options: defaultBarOptions('y', 110) // 修正
+                options: defaultBarOptions('y', 110)
             });
             
             // --- グラフ 5 ---
@@ -400,7 +389,7 @@
                         backgroundColor: chartColors.primary
                     }]
                 },
-                options: defaultBarOptions('y', 80) // 修正
+                options: defaultBarOptions('y', 80)
             });
 
             // --- グラフ 6 ---
@@ -414,7 +403,7 @@
                         backgroundColor: [chartColors.secondary, chartColors.secondary, chartColors.primary, chartColors.primary]
                     }]
                 },
-                options: defaultBarOptions('x', 160) // 修正
+                options: defaultBarOptions('x', 160)
             });
 
             // --- グラフ 7 ---
@@ -428,7 +417,7 @@
                         backgroundColor: chartColors.accent
                     }]
                 },
-                options: defaultBarOptions('y', 25) // 修正
+                options: defaultBarOptions('y', 25)
             });
             
             // --- グラフ 8 ---
@@ -455,7 +444,7 @@
                         backgroundColor: chartColors.gray
                     }]
                 },
-                options: defaultBarOptions('y', 120) // 修正
+                options: defaultBarOptions('y', 120)
             });
             
             // --- グラフ 10 ---
@@ -482,7 +471,7 @@
                         backgroundColor: [chartColors.gray, chartColors.accent]
                     }]
                 },
-                options: defaultBarOptions('x', 40) // 修正
+                options: defaultBarOptions('x', 40)
             });
             
             // --- グラフ 12 ---
@@ -496,7 +485,7 @@
                         backgroundColor: [chartColors.primary, chartColors.primary, chartColors.secondary, chartColors.secondary, chartColors.accent, chartColors.accent]
                     }]
                 },
-                options: defaultBarOptions('x', 70) // 修正
+                options: defaultBarOptions('x', 70)
             });
             
             // --- グラフ 13 ---
@@ -551,7 +540,10 @@
                 options: defaultDoughnutOptions
             });
 
-        }); // DOMContentLoaded 終了
+        }; // drawCharts 終了
+
+        // ページ全体が読み込まれるのを待たずに、Chart.jsとTailwind CSSの読み込み後に実行を試みる
+        // 遅延を設けて強制的に実行
+        setTimeout(drawCharts, 500); // 500ミリ秒の遅延後に描画を試みる
     </script>
-</body>
-</html>
+</div>
